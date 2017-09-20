@@ -17,7 +17,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Solis\\Breaker\\": "src"
+      "Solis\\Foundation\\": "src"
     }
   },
   "scripts": {
