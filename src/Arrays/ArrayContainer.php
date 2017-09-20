@@ -2,7 +2,7 @@
 
 namespace Solis\Foundation\Arrays;
 
-class ArrayContainer
+final class ArrayContainer
 {
     private $array = [];
 
