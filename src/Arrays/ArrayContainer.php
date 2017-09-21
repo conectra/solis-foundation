@@ -2,13 +2,25 @@
 
 namespace Solis\Foundation\Arrays;
 
-final class ArrayContainer
+use Solis\Foundation\Serializer\AbstractSerializer;
+use Solis\Foundation\Serializer\JsonSerializer;
+
+class ArrayContainer
 {
+
     private $array = [];
 
-    public function __construct(array $array = [])
+    private $serializer;
+
+    public function __construct(AbstractSerializer $serializer, array $array = [])
     {
-        $this->array = $array;
+        $this->array      = $array;
+        $this->serializer = $serializer;
+    }
+
+    public static function make($array = [])
+    {
+        return new static(JsonSerializer::make(), $array);
     }
 
     public function get($index)
@@ -21,21 +33,6 @@ final class ArrayContainer
         $this->array[$index] = $value;
     }
 
-    public function first()
-    {
-        return $this->array[0] ?? null;
-    }
-
-    public function last()
-    {
-        return $this->array[$this->count() - 1] ?? null;
-    }
-
-    public function count()
-    {
-        return count($this->array);
-    }
-
     public function keys()
     {
         return array_keys($this->array);
@@ -46,8 +43,7 @@ final class ArrayContainer
         return array_values($this->array);
     }
 
-
-    public function __unset($index)
+    public function remove($index)
     {
         unset($this->array[$index]);
     }
@@ -59,25 +55,6 @@ final class ArrayContainer
 
     public function toJson()
     {
-        return json_encode($this->serialize(), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-    }
-
-    public function serialize()
-    {
-        $entries = array_map(function ($entry) {
-            return $this->serializeEntry($entry);
-        }, $this->toArray());
-
-        return $entries;
-    }
-
-    protected function serializeEntry($value)
-    {
-        return $value instanceof ArrayContainer ? $value->serialize() : $this->serializeObject($value);
-    }
-
-    protected function serializeObject($object)
-    {
-        return is_object($object) ? json_encode(json_decode($object), true) : $object;
+        return $this->serializer->encode($this->toArray(), 'json');
     }
 }

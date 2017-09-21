@@ -11,7 +11,10 @@
          stopOnFailure="false">
     <testsuites>
         <testsuite name="Arrays">
-            <directory>tests/arrays/</directory>
+            <directory>tests/Arrays/</directory>
+        </testsuite>
+        <testsuite name="Serializer">
+            <directory>tests/Serializer/</directory>
         </testsuite>
     </testsuites>
     <filter>
