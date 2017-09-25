@@ -19,6 +19,11 @@ class ArrayCollection
         return $this->collection[$index] ?? null;
     }
 
+    public function add(array $array)
+    {
+        $this->collection[] = ArrayContainer::make($array);
+    }
+
     public function last()
     {
         return $this->collection[count($this->collection) - 1] ?? null;
@@ -32,6 +37,15 @@ class ArrayCollection
     public function count()
     {
         return count($this->collection);
+    }
+
+    public function toArray()
+    {
+        $array = array_map(function (ArrayContainer $entry) {
+            return $entry->toArray();
+        }, $this->collection);
+
+        return $array;
     }
 
     protected function buildCollection($data)

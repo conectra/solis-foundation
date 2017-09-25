@@ -25,8 +25,11 @@ class ArrayCollectionTest extends TestCase
 
     public function testHasExpectedCount()
     {
-        $this->assertEquals(count($this->data), $this->collection->count(),
-                            'Collection has not the expected number of elements');
+        $this->assertEquals(
+            count($this->data),
+            $this->collection->count(),
+            'Collection has not the expected number of elements'
+        );
     }
 
     public function testCanGetLastCollectionItem()
@@ -45,5 +48,20 @@ class ArrayCollectionTest extends TestCase
     {
         $value = $this->collection->get(0);
         $this->assertNotInternalType('null', $value, 'Cannot return entry by index of the ArrayCollection');
+    }
+
+    public function testCanAddToCollection()
+    {
+        $count = $this->collection->count();
+        $this->collection->add(['message' => 'some array']);
+        $this->assertEquals($count + 1, $this->collection->count(), 'Cannot add array to collection');
+    }
+
+    public function testCanGetAsArray()
+    {
+        $this->assertInternalType(
+            'array',
+            $this->collection->toArray(),
+            'Cannot get collection as internal type array');
     }
 }

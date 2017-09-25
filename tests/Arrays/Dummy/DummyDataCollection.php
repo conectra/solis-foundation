@@ -2,7 +2,6 @@
 
 namespace Solis\Foundation\Tests\Arrays\Dummy;
 
-
 class DummyDataCollection
 {
 
