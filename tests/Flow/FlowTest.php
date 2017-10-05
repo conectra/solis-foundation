@@ -100,4 +100,23 @@ class FlowTest extends TestCase
 
         $this->assertEquals($shared, $after[0], 'can\'t share data between closures');
     }
+
+    public function testThrownExceptionWhenSharedKeyIsNotValid()
+    {
+        $this->expectException('Solis\\Foundation\\Closure\\Exception');
+        $shared = 'hoje';
+
+        $flow = new Flow();
+        $flow->setAction(function (FlowInterface $flow) use ($shared) {
+
+            $flow->set('shared', $shared);
+        });
+
+        $flow->addAfter(function (FlowInterface $flow) use ($shared) {
+
+            return $flow->get('day');
+        });
+
+        $flow->execute();
+    }
 }

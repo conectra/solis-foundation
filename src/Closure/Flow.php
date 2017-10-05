@@ -135,7 +135,13 @@ class Flow implements FlowInterface
      */
     public function get(string $data)
     {
-        return $this->data->get($data);
+        $entry = $this->data->get($data);
+
+        if (!$entry) {
+            throw new Exception("{$entry} is a invalid key for closure shared data");
+        }
+
+        return $entry;
     }
 
     /**
@@ -188,7 +194,7 @@ class Flow implements FlowInterface
     {
         $count = 0;
         foreach ($this->before as $closure) {
-            $result = $closure($this);
+            $result = $this->callClosure($closure);
 
             $this->beforeResult[] = $result;
 
@@ -205,7 +211,7 @@ class Flow implements FlowInterface
     {
         $count = 0;
         foreach ($this->after as $closure) {
-            $result = $closure($this);
+            $result = $this->callClosure($closure);
 
             $this->afterResult[] = $result;
 
@@ -213,5 +219,17 @@ class Flow implements FlowInterface
         }
 
         return $count === count($this->after);
+    }
+
+    /**
+     * @param $closure
+     *
+     * @return mixed
+     */
+    private function callClosure($closure)
+    {
+        $result = $closure($this);
+
+        return $result;
     }
 }
