@@ -51,6 +51,11 @@ class Flow implements FlowInterface
     private $data;
 
     /**
+     * @var \Closure
+     */
+    private $onException;
+
+    /**
      * Flow constructor.
      */
     public function __construct()
@@ -63,18 +68,25 @@ class Flow implements FlowInterface
      */
     public function execute()
     {
-        if (!$this->hasActionClosure()) {
-            throw  new \RuntimeException('action closure not defined');
-        }
 
-        if ($this->hasBeforeActionClosure()) {
-            $this->callBeforeActionClosure();
-        }
+        try {
 
-        $response = $this->callActionClosure();
+            if (!$this->hasActionClosure()) {
+                throw  new \RuntimeException('action closure not defined');
+            }
 
-        if ($this->hasAfterActionClosure()) {
-            $this->callAfterActionClosure();
+            if ($this->hasBeforeActionClosure()) {
+                $this->callBeforeActionClosure();
+            }
+
+            $response = $this->callActionClosure();
+
+            if ($this->hasAfterActionClosure()) {
+                $this->callAfterActionClosure();
+            }
+
+        } catch (\Exception $e) {
+            return $this->callOnException($e);
         }
 
         return $response;
@@ -129,6 +141,14 @@ class Flow implements FlowInterface
     }
 
     /**
+     * @param \Closure $closure
+     */
+    public function setExceptionHandler(\Closure $closure)
+    {
+        $this->onException = $closure;
+    }
+
+    /**
      * @param string $data
      *
      * @return mixed|null
@@ -138,7 +158,7 @@ class Flow implements FlowInterface
         $entry = $this->data->get($data);
 
         if (!$entry) {
-            throw new Exception("{$entry} is a invalid key for closure shared data");
+            throw new \OutOfBoundsException("{$entry} is a invalid key for closure shared data");
         }
 
         return $entry;
@@ -228,8 +248,25 @@ class Flow implements FlowInterface
      */
     private function callClosure($closure)
     {
-        $result = $closure($this);
+        return $closure($this);
+    }
 
-        return $result;
+    /**
+     * @param \Exception $exception
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    private function callOnException(\Exception $exception)
+    {
+        if (is_null($this->onException)) {
+            throw  $exception;
+        }
+
+        $closure = $this->onException;
+
+        $message = $closure($this, $exception);
+
+        return $message;
     }
 }

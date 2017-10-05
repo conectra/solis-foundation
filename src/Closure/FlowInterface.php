@@ -64,4 +64,9 @@ interface FlowInterface
      * @return array
      */
     public function getAfterActionResult(): array;
+
+    /**
+     * @param \Closure $closure
+     */
+    public function setExceptionHandler(\Closure $closure);
 }

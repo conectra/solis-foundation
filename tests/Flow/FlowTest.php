@@ -101,9 +101,9 @@ class FlowTest extends TestCase
         $this->assertEquals($shared, $after[0], 'can\'t share data between closures');
     }
 
-    public function testThrownExceptionWhenSharedKeyIsNotValid()
+    public function testCanCallExceptionHandlerMethod()
     {
-        $this->expectException('Solis\\Foundation\\Closure\\Exception');
+
         $shared = 'hoje';
 
         $flow = new Flow();
@@ -117,6 +117,13 @@ class FlowTest extends TestCase
             return $flow->get('day');
         });
 
-        $flow->execute();
+        $flow->setExceptionHandler(function (FlowInterface $flow, \Exception $e) {
+
+            return $e->getMessage();
+        });
+
+        $result = $flow->execute();
+
+        $this->assertInternalType('string', $result, 'can\'t call excpetion handler');
     }
 }
