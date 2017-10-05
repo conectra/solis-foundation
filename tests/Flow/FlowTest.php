@@ -101,6 +101,31 @@ class FlowTest extends TestCase
         $this->assertEquals($shared, $after[0], 'can\'t share data between closures');
     }
 
+    public function testCanSetSharedDataAfterInstantiateFlow()
+    {
+        $shared = [
+                'shared' => uniqid(),
+        ];
+
+        $flow = new Flow();
+        $flow->setAction(function () {
+
+            return true;
+        });
+        $flow->addAfter(function (FlowInterface $flow) {
+
+            return $flow->get('shared');
+        });
+
+        $flow->addShared($shared);
+
+        $flow->execute();
+
+        $after = $flow->getAfterActionResult();
+
+        $this->assertEquals($shared['shared'], $after[0], 'can\'t share data between closures');
+    }
+
     public function testCanCallExceptionHandlerMethod()
     {
 

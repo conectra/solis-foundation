@@ -125,6 +125,16 @@ class Flow implements FlowInterface
     }
 
     /**
+     * @param array $shared
+     */
+    public function addShared(array $shared)
+    {
+        foreach ($shared as $field => $value) {
+            $this->data->set($field, $value);
+        }
+    }
+
+    /**
      * @return array
      */
     public function getBeforeActionResult(): array

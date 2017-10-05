@@ -56,6 +56,11 @@ interface FlowInterface
     public function addAfter(\Closure $after);
 
     /**
+     * @param array $shared
+     */
+    public function addShared(array $shared);
+
+    /**
      * @return array
      */
     public function getBeforeActionResult(): array;
