@@ -10,6 +10,8 @@
 
 namespace Solis\Foundation\Closure;
 
+use Solis\Foundation\Arrays\ArrayContainer;
+
 /**
  * Class Flow
  *
@@ -42,6 +44,19 @@ class Flow implements FlowInterface
      * @var array
      */
     private $afterResult = [];
+
+    /**
+     * @var ArrayContainer
+     */
+    private $data;
+
+    /**
+     * Flow constructor.
+     */
+    public function __construct()
+    {
+        $this->data = ArrayContainer::make();
+    }
 
     /**
      * @return mixed
@@ -113,6 +128,28 @@ class Flow implements FlowInterface
         return $this->afterResult;
     }
 
+    /**
+     * @param string $data
+     *
+     * @return mixed|null
+     */
+    public function get(string $data)
+    {
+        return $this->data->get($data);
+    }
+
+    /**
+     * @param string $property
+     * @param mixed  $value
+     */
+    public function set(string $property, $value)
+    {
+        $this->data->set($property, $value);
+    }
+
+    /**
+     * @return bool
+     */
     private function hasActionClosure()
     {
         return !empty($this->action);
@@ -141,7 +178,7 @@ class Flow implements FlowInterface
     {
         $closure = $this->getAction();
 
-        return $closure();
+        return $closure($this);
     }
 
     /**
@@ -151,7 +188,7 @@ class Flow implements FlowInterface
     {
         $count = 0;
         foreach ($this->before as $closure) {
-            $result = $closure();
+            $result = $closure($this);
 
             $this->beforeResult[] = $result;
 
@@ -168,7 +205,7 @@ class Flow implements FlowInterface
     {
         $count = 0;
         foreach ($this->after as $closure) {
-            $result = $closure();
+            $result = $closure($this);
 
             $this->afterResult[] = $result;
 

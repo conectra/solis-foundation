@@ -23,6 +23,19 @@ interface FlowInterface
     public function execute();
 
     /**
+     * @param string $data
+     *
+     * @return mixed
+     */
+    public function get(string $data);
+
+    /**
+     * @param string $property
+     * @param mixed  $value
+     */
+    public function set(string $property, $value);
+
+    /**
      * @return \Closure
      */
     public function getAction(): \Closure;

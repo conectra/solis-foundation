@@ -12,6 +12,7 @@ namespace Solis\Foundation\Tests\Flow;
 
 use Solis\Foundation\Closure\Flow;
 use PHPUnit\Framework\TestCase;
+use Solis\Foundation\Closure\FlowInterface;
 
 /**
  * Class FlowTest
@@ -25,7 +26,7 @@ class FlowTest extends TestCase
     {
         $flow     = new Flow();
         $expected = 'hello world!';
-        $flow->setAction(function () use ($expected) {
+        $flow->setAction(function (FlowInterface $flow) use ($expected) {
             return $expected;
         });
         $this->assertEquals($expected, $flow->execute(), 'can\'t execute flow action as expected');
@@ -41,15 +42,15 @@ class FlowTest extends TestCase
     {
         $flow     = new Flow();
         $expected = 'hello world!';
-        $flow->setAction(function () use ($expected) {
+        $flow->setAction(function (FlowInterface $flow) use ($expected) {
             return $expected;
         });
 
         $expected = 'before closure';
-        $flow->addBefore(function () use ($expected) {
+        $flow->addBefore(function (FlowInterface $flow) use ($expected) {
             return $expected;
         });
-        $flow->addBefore(function () use ($expected) {
+        $flow->addBefore(function (FlowInterface $flow) use ($expected) {
             return $expected;
         });
 
@@ -61,19 +62,42 @@ class FlowTest extends TestCase
     {
         $flow     = new Flow();
         $expected = 'hello world!';
-        $flow->setAction(function () use ($expected) {
+        $flow->setAction(function (FlowInterface $flow) use ($expected) {
             return $expected;
         });
 
         $expected = 'after closure';
-        $flow->addAfter(function () use ($expected) {
+        $flow->addAfter(function (FlowInterface $flow) use ($expected) {
             return $expected;
         });
-        $flow->addAfter(function () use ($expected) {
+        $flow->addAfter(function (FlowInterface $flow) use ($expected) {
             return $expected;
         });
 
         $flow->execute();
         $this->assertCount(2, $flow->getAfterActionResult(), 'can\'t get after closure result');
+    }
+
+    public function testCanShareDataBetweenClosures()
+    {
+
+        $shared = 'hoje';
+
+        $flow = new Flow();
+        $flow->setAction(function (FlowInterface $flow) use ($shared) {
+
+            $flow->set('shared', $shared);
+        });
+
+        $flow->addAfter(function (FlowInterface $flow) use ($shared) {
+
+            return $flow->get('shared');
+        });
+
+        $flow->execute();
+
+        $after = $flow->getAfterActionResult();
+
+        $this->assertEquals($shared, $after[0], 'can\'t share data between closures');
     }
 }
