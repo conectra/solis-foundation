@@ -62,6 +62,7 @@ class ArrayCollectionTest extends TestCase
         $this->assertInternalType(
             'array',
             $this->collection->toArray(),
-            'Cannot get collection as internal type array');
+            'Cannot get collection as internal type array'
+        );
     }
 }

@@ -16,8 +16,8 @@
         <testsuite name="Serializer">
             <directory>tests/Serializer/</directory>
         </testsuite>
-        <testsuite name="Context">
-            <directory>tests/Context/</directory>
+        <testsuite name="Flow">
+            <directory>tests/Flow/</directory>
         </testsuite>
     </testsuites>
     <filter>
