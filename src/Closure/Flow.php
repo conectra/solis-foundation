@@ -167,7 +167,7 @@ class Flow implements FlowInterface
     {
         $entry = $this->data->get($data);
 
-        if (!$entry) {
+        if (is_null($entry)) {
             throw new \OutOfBoundsException("{$entry} is a invalid key for closure shared data");
         }
 
